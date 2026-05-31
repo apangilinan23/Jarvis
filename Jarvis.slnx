@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="jarvis.client/jarvis.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="Jarvis.Server/Jarvis.Server.csproj" />
+</Solution>
