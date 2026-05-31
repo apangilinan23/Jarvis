@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<GeminiService>();
+builder.Services.AddSingleton<Jarvis.Server.Services.ConversationStore>();
 
 builder.Services.AddSingleton(serviceProvider =>
 {
