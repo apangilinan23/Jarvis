@@ -1,30 +1,27 @@
-using Mscc.GenerativeAI;
+using Google.GenAI;
+using Jarvis.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+builder.Services.AddScoped<GeminiService>();
 
 builder.Services.AddSingleton(serviceProvider =>
 {
-    var apiKey = builder.Configuration["Gemini:ApiKey"]
-        ?? throw new InvalidOperationException("Gemini:ApiKey is not configured.");
-    return new GoogleAI(apiKey);
+    var apiKey = builder.Configuration["Gemini:ApiKey"];
+    if (string.IsNullOrWhiteSpace(apiKey))
+        throw new InvalidOperationException("Gemini:ApiKey is not configured. Add it to appsettings.Development.json.");
+    return new Client(apiKey: apiKey);
 });
 
 var app = builder.Build();
 
+
 app.UseDefaultFiles();
 app.MapStaticAssets();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
 
 app.UseHttpsRedirection();
 

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Mscc.GenerativeAI;
+using Jarvis.Server.Services;
 
 namespace Jarvis.Server.Controllers
 {
@@ -10,15 +10,11 @@ namespace Jarvis.Server.Controllers
     [Route("[controller]")]
     public class GeminiController : ControllerBase
     {
-        private readonly GoogleAI _googleAI;
-        private readonly IConfiguration _configuration;
-        private readonly ILogger<GeminiController> _logger;
+        private readonly GeminiService _geminiService;
 
-        public GeminiController(GoogleAI googleAI, IConfiguration configuration, ILogger<GeminiController> logger)
+        public GeminiController(GeminiService geminiService)
         {
-            _googleAI = googleAI;
-            _configuration = configuration;
-            _logger = logger;
+            _geminiService = geminiService;
         }
 
         /// <summary>
@@ -32,17 +28,8 @@ namespace Jarvis.Server.Controllers
             if (string.IsNullOrWhiteSpace(request.Message))
                 return BadRequest("Message cannot be empty.");
 
-            var modelName = _configuration["Gemini:Model"] ?? "gemini-2.0-flash";
-
-            _logger.LogInformation("Sending message to Gemini ({Model}): {Message}", modelName, request.Message);
-
-            var model = _googleAI.GenerativeModel(model: modelName);
-            var response = await model.GenerateContent(request.Message);
-
-            var reply = response.Text;
-            _logger.LogInformation("Gemini replied: {Reply}", reply);
-
-            return Ok(new ChatResponse(reply ?? string.Empty));
+            var reply = await _geminiService.Chat(request.Message);
+            return Ok(new ChatResponse(reply));
         }
     }
 }

@@ -1,6 +1,15 @@
-@Jarvis.Server_HostAddress = http://localhost:5038
+@Jarvis.Server_HostAddress = https://localhost:7020
 
 GET {{Jarvis.Server_HostAddress}}/weatherforecast/
 Accept: application/json
+
+###
+
+POST {{Jarvis.Server_HostAddress}}/gemini/chat
+Content-Type: application/json
+
+{
+  "message": "Who is Michael Jordan?"
+}
 
 ###
