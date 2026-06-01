@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -7,6 +7,7 @@
     <SpaRoot>..\jarvis.client</SpaRoot>
     <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
     <SpaProxyServerUrl>https://localhost:60370</SpaProxyServerUrl>
+    <UserSecretsId>23023e29-9b7e-46a5-9ea6-1872e3925125</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

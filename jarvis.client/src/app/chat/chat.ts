@@ -23,6 +23,19 @@ export class ChatComponent implements OnInit, OnDestroy {
   activated = false;
   clock = '';
 
+  // metrics panel
+  cpu = 42;
+  memory = 67;
+  power = 88;
+  network = 31;
+  uptime = '00:00:00';
+
+  // diagnostic log
+  diagLog: { time: string; msg: string; level: string }[] = [];
+
+  // waveform
+  waveBars: number[] = Array(20).fill(10);
+
   private recognition: any;
   private lastReplyText = '';
   private clockTimer: any;
@@ -31,11 +44,34 @@ export class ChatComponent implements OnInit, OnDestroy {
   private pendingParagraphs: string[] = [];
   awaitingMore = false;
 
+  private metricsTimer: any;
+  private uptimeTimer: any;
+  private waveTimer: any;
+  private uptimeSeconds = 0;
+
   constructor(private sanitizer: DomSanitizer, private zone: NgZone) {}
 
   ngOnInit() {
     this.updateClock();
     this.clockTimer = setInterval(() => this.zone.run(() => this.updateClock()), 1000);
+
+    // metrics simulation
+    this.metricsTimer = setInterval(() => this.zone.run(() => this.tickMetrics()), 2000);
+
+    // uptime counter
+    this.uptimeTimer = setInterval(() => this.zone.run(() => {
+      this.uptimeSeconds++;
+      const h = Math.floor(this.uptimeSeconds / 3600);
+      const m = Math.floor((this.uptimeSeconds % 3600) / 60);
+      const s = this.uptimeSeconds % 60;
+      this.uptime = [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
+    }), 1000);
+
+    // waveform animation
+    this.waveTimer = setInterval(() => this.zone.run(() => this.tickWave()), 120);
+
+    // seed diagnostic log
+    this.seedDiagLog();
 
     this.ttsSupported = 'speechSynthesis' in window;
     if (this.ttsSupported) {
@@ -87,6 +123,7 @@ export class ChatComponent implements OnInit, OnDestroy {
           }
           if (t.includes('hello jarvis') || t.includes('hey jarvis')) {
             this.activated = true;
+            this.addDiagEntry('ACTIVATION CONFIRMED', 'OK');
             const hour = new Date().getHours();
             const timeOfDay = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
             this.speak(`Hello sir Adrian, good ${timeOfDay} to you. How may I assist you?`, true);
@@ -129,11 +166,57 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (this.recognition) this.recognition.abort();
     if (this.ttsSupported) window.speechSynthesis.cancel();
     clearInterval(this.clockTimer);
+    clearInterval(this.metricsTimer);
+    clearInterval(this.uptimeTimer);
+    clearInterval(this.waveTimer);
   }
 
   private updateClock() {
     const now = new Date();
     this.clock = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+
+  private tickMetrics() {
+    const drift = (v: number, range: number) =>
+      Math.min(99, Math.max(5, v + (Math.random() - 0.5) * range));
+    this.cpu     = Math.round(drift(this.cpu, 14));
+    this.memory  = Math.round(drift(this.memory, 6));
+    this.power   = Math.round(drift(this.power, 8));
+    this.network = Math.round(drift(this.network, 22));
+  }
+
+  private tickWave() {
+    const active = this.listening || this.speaking;
+    this.waveBars = this.waveBars.map(() =>
+      active ? 15 + Math.random() * 80 : 5 + Math.random() * 18
+    );
+  }
+
+  private seedDiagLog() {
+    const entries = [
+      { msg: 'BOOT SEQUENCE COMPLETE', level: 'OK' },
+      { msg: 'VOICE RECOGNITION LOADED', level: 'OK' },
+      { msg: 'NEURAL CORE INITIALISED', level: 'OK' },
+      { msg: 'UPLINK ESTABLISHED', level: 'OK' },
+      { msg: 'THREAT SCAN: NOMINAL', level: 'OK' },
+    ];
+    const now = Date.now();
+    entries.forEach((e, i) => {
+      const t = new Date(now - (entries.length - i) * 3000);
+      this.diagLog.push({
+        time: t.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        ...e
+      });
+    });
+  }
+
+  addDiagEntry(msg: string, level = 'INFO') {
+    this.diagLog.push({
+      time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      msg,
+      level
+    });
+    if (this.diagLog.length > 8) this.diagLog.shift();
   }
 
   speak(text?: string, full = false) {
@@ -211,6 +294,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   private shutdown() {
     this.recognition?.abort();
     this.activated = false;
+    this.addDiagEntry('SHUTDOWN INITIATED', 'WARN');
     if (!this.ttsSupported) { window.close(); return; }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance('Okay sir Adrian, bye for now. Cheers.');
@@ -316,6 +400,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.error = null;
       this.replyHtml = null;
       this.hasReply = false;
+      this.addDiagEntry('REQUEST DISPATCHED', 'INFO');
     });
     let rawText = '';
     let firstEvent = true;
@@ -375,6 +460,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.zone.run(() => {
         this.lastReplyText = this.stripMarkdown(rawText);
         this.loading = false;
+        this.addDiagEntry('RESPONSE RECEIVED', 'OK');
         this.speak(this.lastReplyText);
       });
     } catch (err: any) {

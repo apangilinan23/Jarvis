@@ -9,6 +9,65 @@
   <div class="corner corner-bl"></div>
   <div class="corner corner-br"></div>
 
+  <!-- scrolling ticker -->
+  <div class="hud-ticker">
+    <span class="ticker-label">FEED</span>
+    <div class="ticker-wrap">
+      <div class="ticker-inner">
+        NEURAL NETWORK ONLINE &nbsp;▸&nbsp; VOICE RECOGNITION ACTIVE &nbsp;▸&nbsp; ENCRYPTION: AES-256 &nbsp;▸&nbsp; UPLINK STABLE &nbsp;▸&nbsp; MARK I SUIT: NOMINAL &nbsp;▸&nbsp; ARC REACTOR: 94% &nbsp;▸&nbsp; THREAT LEVEL: MINIMAL &nbsp;▸&nbsp; REPULSOR TECH: READY &nbsp;▸&nbsp; JARVIS v2.1 ONLINE &nbsp;▸&nbsp; NEURAL NETWORK ONLINE &nbsp;▸&nbsp; VOICE RECOGNITION ACTIVE &nbsp;▸&nbsp; ENCRYPTION: AES-256 &nbsp;▸&nbsp; UPLINK STABLE &nbsp;▸&nbsp; MARK I SUIT: NOMINAL &nbsp;▸&nbsp; ARC REACTOR: 94% &nbsp;▸&nbsp; THREAT LEVEL: MINIMAL &nbsp;▸&nbsp; REPULSOR TECH: READY &nbsp;▸&nbsp; JARVIS v2.1 ONLINE &nbsp;▸&nbsp;
+      </div>
+    </div>
+  </div>
+
+  <!-- left metrics panel -->
+  <div class="hud-panel hud-panel-left">
+    <div class="panel-header">SYS METRICS</div>
+    <div class="panel-metric">
+      <span class="metric-label">CPU</span>
+      <div class="metric-bar-track"><div class="metric-bar" [style.width.%]="cpu" [class.metric-bar-high]="cpu > 80"></div></div>
+      <span class="metric-val">{{ cpu }}%</span>
+    </div>
+    <div class="panel-metric">
+      <span class="metric-label">MEM</span>
+      <div class="metric-bar-track"><div class="metric-bar" [style.width.%]="memory" [class.metric-bar-high]="memory > 80"></div></div>
+      <span class="metric-val">{{ memory }}%</span>
+    </div>
+    <div class="panel-metric">
+      <span class="metric-label">PWR</span>
+      <div class="metric-bar-track"><div class="metric-bar" [style.width.%]="power"></div></div>
+      <span class="metric-val">{{ power }}%</span>
+    </div>
+    <div class="panel-metric">
+      <span class="metric-label">NET</span>
+      <div class="metric-bar-track"><div class="metric-bar" [style.width.%]="network"></div></div>
+      <span class="metric-val">{{ network }}%</span>
+    </div>
+    <div class="panel-divider"></div>
+    <div class="panel-stat">
+      <span class="stat-key">UPTIME</span>
+      <span class="stat-val">{{ uptime }}</span>
+    </div>
+    <div class="panel-stat">
+      <span class="stat-key">THREAT</span>
+      <span class="stat-val stat-green">NONE</span>
+    </div>
+    <div class="panel-stat">
+      <span class="stat-key">SUIT</span>
+      <span class="stat-val stat-green">NOMINAL</span>
+    </div>
+  </div>
+
+  <!-- right diagnostic log panel -->
+  <div class="hud-panel hud-panel-right">
+    <div class="panel-header">DIAGNOSTIC LOG</div>
+    <div class="diag-log">
+      <div *ngFor="let entry of diagLog" class="diag-entry" [class.diag-warn]="entry.level === 'WARN'" [class.diag-ok]="entry.level === 'OK'">
+        <span class="diag-time">{{ entry.time }}</span>
+        <span class="diag-msg">{{ entry.msg }}</span>
+      </div>
+    </div>
+  </div>
+
   <!-- top bar -->
   <div class="hud-topbar">
     <span class="hud-topbar-item">STARK INDUSTRIES</span>
@@ -54,6 +113,11 @@
   <!-- error -->
   <div *ngIf="error" class="hud-error">
     <span class="hud-error-icon">!</span> {{ error }}
+  </div>
+
+  <!-- audio waveform -->
+  <div class="hud-waveform" [class.waveform-active]="listening || speaking">
+    <div *ngFor="let h of waveBars" class="wave-bar" [style.height.%]="h"></div>
   </div>
 
   <!-- bottom bar -->

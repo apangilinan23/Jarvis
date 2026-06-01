@@ -386,3 +386,176 @@
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
 }
+
+/* ── Scrolling ticker ──────────────────────────────────────── */
+.hud-ticker {
+  position: absolute;
+  top: 40px;
+  left: 70px;
+  right: 70px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.52rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  z-index: 5;
+  overflow: hidden;
+}
+.ticker-label {
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  padding: 1px 5px;
+  font-size: 0.48rem;
+}
+.ticker-wrap {
+  flex: 1;
+  overflow: hidden;
+}
+.ticker-inner {
+  white-space: nowrap;
+  animation: tickerScroll 35s linear infinite;
+}
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── Side panels ───────────────────────────────────────────── */
+.hud-panel {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 160px;
+  background: rgba(0, 229, 255, 0.025);
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  padding: 10px 12px;
+  z-index: 5;
+}
+.hud-panel-left  { left: 20px; }
+.hud-panel-right { right: 20px; }
+
+.panel-header {
+  font-size: 0.52rem;
+  letter-spacing: 0.2em;
+  opacity: 0.55;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+/* ── Metrics ───────────────────────────────────────────────── */
+.panel-metric {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+.metric-label {
+  font-size: 0.48rem;
+  letter-spacing: 0.1em;
+  opacity: 0.55;
+  width: 24px;
+  flex-shrink: 0;
+}
+.metric-bar-track {
+  flex: 1;
+  height: 3px;
+  background: rgba(0, 229, 255, 0.1);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  overflow: hidden;
+}
+.metric-bar {
+  height: 100%;
+  background: var(--cyan);
+  box-shadow: 0 0 5px var(--cyan);
+  transition: width 1.6s ease;
+}
+.metric-bar-high {
+  background: #ff7a30;
+  box-shadow: 0 0 6px #ff7a30;
+}
+.metric-val {
+  font-size: 0.48rem;
+  width: 28px;
+  text-align: right;
+  opacity: 0.75;
+}
+.panel-divider {
+  height: 1px;
+  background: rgba(0, 229, 255, 0.15);
+  margin: 8px 0;
+}
+.panel-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  font-size: 0.48rem;
+  letter-spacing: 0.1em;
+}
+.stat-key { opacity: 0.45; }
+.stat-val { opacity: 0.85; }
+.stat-green {
+  color: #39ff8a;
+  text-shadow: 0 0 6px rgba(57, 255, 138, 0.5);
+}
+
+/* ── Diagnostic log ────────────────────────────────────────── */
+.diag-log {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 180px;
+  overflow: hidden;
+}
+.diag-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  animation: diagFadeIn 0.35s ease;
+}
+.diag-time {
+  font-size: 0.4rem;
+  opacity: 0.38;
+  letter-spacing: 0.06em;
+}
+.diag-msg {
+  font-size: 0.44rem;
+  letter-spacing: 0.07em;
+  opacity: 0.65;
+}
+.diag-warn .diag-msg { color: #ffb347; opacity: 0.85; }
+.diag-ok   .diag-msg { color: #39ff8a; opacity: 0.85; }
+
+@keyframes diagFadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; }
+}
+
+/* ── Audio waveform ────────────────────────────────────────── */
+.hud-waveform {
+  position: absolute;
+  bottom: 58px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 28px;
+  z-index: 5;
+  opacity: 0.2;
+  transition: opacity 0.5s ease;
+}
+.hud-waveform.waveform-active {
+  opacity: 1;
+}
+.wave-bar {
+  width: 3px;
+  min-height: 3px;
+  background: var(--cyan);
+  box-shadow: 0 0 4px var(--cyan);
+  border-radius: 1px;
+  transition: height 0.1s ease;
+}
