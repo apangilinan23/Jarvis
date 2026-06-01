@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/gemini/(.*)",
+      "destination": "https://jarvis-server-416803853374.asia-southeast1.run.app/gemini/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
