@@ -1,16 +1,8 @@
-const { env } = require('process');
-
-const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-  env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7020';
-
 const PROXY_CONFIG = {
-  '/weatherforecast': {
-    target,
-    secure: false
-  },
   '/gemini': {
-    target,
-    secure: false
+    target: 'https://jarvis-server-416803853374.asia-southeast1.run.app',
+    secure: true,
+    changeOrigin: true
   }
 };
 

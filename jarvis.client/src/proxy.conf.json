@@ -1,7 +1,7 @@
 {
   "/gemini": {
-    "target": "https://localhost:7020",
-    "secure": false,
+    "target": "https://jarvis-server-416803853374.asia-southeast1.run.app",
+    "secure": true,
     "changeOrigin": true
   }
 }
