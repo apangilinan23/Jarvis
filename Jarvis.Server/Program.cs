@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<GeminiService>();
 builder.Services.AddSingleton<Jarvis.Server.Services.ConversationStore>();
@@ -20,9 +22,14 @@ builder.Services.AddSingleton(serviceProvider =>
 
 var app = builder.Build();
 
+app.UseSwagger();
+app.UseSwaggerUI();
 
-app.UseDefaultFiles();
-app.MapStaticAssets();
+if (app.Environment.IsDevelopment())
+{
+    app.UseDefaultFiles();
+    app.MapStaticAssets();
+}
 
 app.UseHttpsRedirection();
 
@@ -30,6 +37,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapFallbackToFile("/index.html");
+if (app.Environment.IsDevelopment())
+    app.MapFallbackToFile("/index.html");
+else
+    app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
 
 app.Run();

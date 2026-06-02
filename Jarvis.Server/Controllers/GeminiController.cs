@@ -62,11 +62,11 @@ namespace Jarvis.Server.Controllers
         /// Clears the conversation history for a session.
         /// DELETE /gemini/chat/{sessionId}
         /// </summary>
-        [HttpDelete("chat/{sessionId}")]
-        public IActionResult ClearSession(string sessionId)
-        {
-            _store.Remove(sessionId);
-            return NoContent();
-        }
+        //[HttpDelete("chat/{sessionId}")]
+        //public IActionResult ClearSession(string sessionId)
+        //{
+        //    _store.Remove(sessionId);
+        //    return NoContent();
+        //}
     }
 }
